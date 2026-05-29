@@ -1,0 +1,14 @@
+[Unit]
+Description=OlcRTC {{ .Username }}
+After=network.target network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/olcrtc-users/{{ .Username }}
+ExecStart=/opt/olcrtc/olcrtc-linux-amd64 srv_template.yaml
+Restart=always
+RestartSec=5
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

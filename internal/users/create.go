@@ -10,6 +10,7 @@ import (
 	"github.com/sanikum3/ORP/internal/models"
 	"github.com/sanikum3/ORP/internal/storage"
 	"github.com/sanikum3/ORP/internal/systemd"
+	"github.com/sanikum3/ORP/internal/templates"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -72,7 +73,11 @@ func CreateUser(name string) error {
 		fmt.Println("Error creating user directory:", err)
 		return nil
 	}
-	template, err := template.ParseFiles("templates/srv_template.yaml")
+	content, err := templates.FS.ReadFile("srv_template.yaml")
+	if err != nil {
+		return fmt.Errorf("read template: %w", err)
+	}
+	template, err := template.New("config").Parse(string(content))
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
 		return nil
