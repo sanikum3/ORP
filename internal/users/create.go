@@ -16,9 +16,10 @@ import (
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 const (
-	BaseDir   = "/opt/olcrtc-users"
-	JitsiBase = "meet.crypto.ru"
+	BaseDir = "/opt/olcrtc-users"
 )
+
+var JitsiBase = "meet.handyweb.org"
 
 type Config struct {
 	RoomID string
@@ -57,7 +58,7 @@ func CreateUser(name string) error {
 	var hash, err = RandomHex(32)
 	if err != nil {
 		fmt.Println("Error generating hash:", err)
-		return nil
+		return err
 	}
 	fullroom := fmt.Sprintf(
 		"https://%s/%s", JitsiBase, roomid,
@@ -71,7 +72,7 @@ func CreateUser(name string) error {
 	err = os.Mkdir(userdir, 0755)
 	if err != nil {
 		fmt.Println("Error creating user directory:", err)
-		return nil
+		return err
 	}
 	content, err := templates.FS.ReadFile("srv_template.yaml")
 	if err != nil {
@@ -80,12 +81,12 @@ func CreateUser(name string) error {
 	template, err := template.New("config").Parse(string(content))
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
-		return nil
+		return err
 	}
 	file, err := os.Create(userdir + "/srv_template.yaml")
 	if err != nil {
 		fmt.Println("Error creating file:", err)
-		return nil
+		return err
 	}
 	defer file.Close()
 	err = template.Execute(file, config)
@@ -123,8 +124,10 @@ func CreateUser(name string) error {
 		Hash:     hash,
 		Url:      url,
 	}
-	storage.Save()
-
+	err = storage.Save()
+	if err != nil {
+		return fmt.Errorf("save %w", err)
+	}
 	fmt.Println("UserCreated", name)
 	fmt.Println()
 	fmt.Println("URL:")
