@@ -8,8 +8,5 @@ orp
 *.test
 *.out
 
-data/
-data/users.json
-
 .env
 .DS_Store
