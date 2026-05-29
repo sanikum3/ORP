@@ -9,16 +9,30 @@ import (
 
 var Users = map[string]models.User{}
 
-const File = "data/users.json"
+const File = "/opt/orp/data/users.json"
 
 func Save() error {
 
-	data, err := json.MarshalIndent(Users, "", "  ")
+	err := os.MkdirAll("/opt/orp/data", 0755)
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(File, data, 0644)
+	data, err := json.MarshalIndent(
+		Users,
+		"",
+		"  ",
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(
+		File,
+		data,
+		0644,
+	)
 }
 
 func Load() error {
