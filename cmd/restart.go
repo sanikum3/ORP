@@ -24,7 +24,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 		username := args[0]
-		users.CreateUser(username)
+		users.Restart(username)
 	},
 }
 
