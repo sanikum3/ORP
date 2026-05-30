@@ -4,7 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/sanikum3/ORP/internal/users"
+	"github.com/sanikum3/ORP/internal/configs"
 	"github.com/spf13/cobra"
 )
 
@@ -23,8 +23,20 @@ to quickly create a Cobra application.`,
 			println("url required")
 			return
 		}
-		url := args[0]
-		users.JitsiBase = url
+
+		cfg, err := configs.Load()
+		if err != nil {
+			panic(err)
+		}
+
+		cfg.JitsiBase = args[0]
+
+		err = configs.Save(cfg)
+		if err != nil {
+			panic(err)
+		}
+
+		println("Base URL changed:", cfg.JitsiBase)
 	},
 }
 

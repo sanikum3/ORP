@@ -7,6 +7,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/sanikum3/ORP/internal/configs"
 	"github.com/sanikum3/ORP/internal/models"
 	"github.com/sanikum3/ORP/internal/storage"
 	"github.com/sanikum3/ORP/internal/systemd"
@@ -60,8 +61,15 @@ func CreateUser(name string) error {
 		fmt.Println("Error generating hash:", err)
 		return err
 	}
+	cfg, err := configs.Load()
+	if err != nil {
+		return err
+	}
+
 	fullroom := fmt.Sprintf(
-		"https://%s/%s", JitsiBase, roomid,
+		"https://%s/%s",
+		cfg.JitsiBase,
+		roomid,
 	)
 	userdir := fmt.Sprintf("%s/%s", BaseDir, name)
 	fmt.Println("Full room URL:", fullroom)
